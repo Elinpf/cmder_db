@@ -6,6 +6,13 @@
 
 @LPORT.desc(Local Port)
 
+
+@WORDLIST.recommend(/usr/share/wordlists/rockyou.txt(Big Password))
+@WORDLIST.recommend(/usr/share/seclists/Passwords/darkweb2017-top1000.txt(Small Password List))
+@WORDLIST.recommend(/usr/share/seclists/Usernames/Names/names.txt(Big User List))
+@WORDLIST.recommend(/usr/share/seclists/Usernames/top-usernames-shortlist.txt(Small User List))
+@WORDLIST.recommend(/usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt(Big Directory List))
+@WORDLIST.recommend(/usr/share/seclists/Discovery/Web-Content/common.txt(Small Directory List))
 @WORDLIST.desc(wordlist is in /usr/share/wordlists/ ?)
 
 @USER.desc(Username)
