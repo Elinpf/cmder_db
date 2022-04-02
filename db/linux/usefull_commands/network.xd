@@ -38,4 +38,4 @@ ssh-keyscan 10.10.10.101
 
 # desc: Secure Copy to Remote
 # refer: https://wangdoc.com/ssh/scp.html
-scp #{source_file} #{user}@#{RHOST}:#{remote_path}
+scp #{source_file} #{USER}@#{RHOST}:#{remote_path}

