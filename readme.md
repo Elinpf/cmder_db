@@ -51,3 +51,4 @@ cmd文件以空行为域分隔，如果开头不是以`#`和`@`开头，则认�
    - PWD
    - DOMAIN
    - WORDLIST
+   - URL
