@@ -1,11 +1,12 @@
-# desc: Generate RSA Key
+--- 使用 identity 文件登录
+
+# desc: 生成sshkey
 ssh-keygen
 
-# desc: Copy
-cat ~/.ssh/id_rsa.pub
+# desc: 将pub key保存到对端主机
+echo '#{pub_key_str}' >> /home/#{USER}/.ssh/authorized_keys
+@pub_key_str.desc(id_rsa.pub)
 
-# desc: Victim
-echo "#{id_rsa_pub}" >> ~/.ssh/authorized_keys
-
-# desc: Login with Private key
-ssh -i id_rsa #{USER}@#{RHOST}
+# desc: 使用私钥登录
+ssh #{USER}@#{RHOST} -i #{key_file}
+@key_file.recommend(id_rsa)
