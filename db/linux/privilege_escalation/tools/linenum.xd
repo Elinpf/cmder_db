@@ -1,5 +1,6 @@
-# refer: https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh
+# refer: https://github.com/rebootuser/LinEnum
 
+@file.desc(Script File)
 @file.recommend(linenum.sh)
 @out_file.recommend(linenum.out)
 @enc_file.recommend(le.enc)
