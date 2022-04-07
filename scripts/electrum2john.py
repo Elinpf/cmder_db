@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 # This software is Copyright (c) 2017, Dhiru Kholia <dhiru.kholia at gmail.com>
 # and it is hereby released under GPL v2 license.
@@ -29,7 +29,8 @@ except ImportError:
         sys.path.append(".")
         import simplejson as json
     except ImportError:
-        sys.stderr.write("Please install json / simplejson module which is currently not installed.\n")
+        sys.stderr.write(
+            "Please install json / simplejson module which is currently not installed.\n")
         sys.exit(-1)
 
 
@@ -37,7 +38,8 @@ def process_electrum28_wallets(bname, data, options):
     version = 4  # hack
     MIN_LEN = 37 + 32 + 32  # header + ciphertext + trailer
     if len(data) < MIN_LEN * 4 / 3:
-        sys.stderr.write("%s: Electrum 2.8+ wallet is too small to parse!\n" % bname)
+        sys.stderr.write(
+            "%s: Electrum 2.8+ wallet is too small to parse!\n" % bname)
         return
     data = base64.b64decode(data)
     ephemeral_pubkey = data[4:37]  # compressed representation
@@ -45,13 +47,16 @@ def process_electrum28_wallets(bname, data, options):
     mac = data[-32:]
     all_but_mac = data[:-32]
     if len(all_but_mac) > 16384 or options.truncate:
-        sys.stderr.write("Forcing generation of truncated hash, this is not tested well!\n")
-        all_but_mac = data[37:][:1024]   # skip over the 4-byte magic & 33-byte pubkey
+        sys.stderr.write(
+            "Forcing generation of truncated hash, this is not tested well!\n")
+        # skip over the 4-byte magic & 33-byte pubkey
+        all_but_mac = data[37:][:1024]
         version = 5  # hack
     ephemeral_pubkey = binascii.hexlify(ephemeral_pubkey).decode("ascii")
     mac = binascii.hexlify(mac).decode("ascii")
     all_but_mac = binascii.hexlify(all_but_mac).decode("ascii")
-    sys.stdout.write("%s:$electrum$%d*%s*%s*%s\n" % (bname, version, ephemeral_pubkey, all_but_mac, mac))
+    sys.stdout.write("%s:$electrum$%d*%s*%s*%s\n" %
+                     (bname, version, ephemeral_pubkey, all_but_mac, mac))
 
 
 def process_file(filename, options):
@@ -109,20 +114,25 @@ def process_file(filename, options):
             seed_version = wallet["seed_version"]
             seed_data = base64.b64decode(wallet["seed"])
             if len(seed_data) != 64:
-                sys.stderr.write("%s: Weird seed length value '%d' found!\n" % (bname, len(seed_data)))
+                sys.stderr.write(
+                    "%s: Weird seed length value '%d' found!\n" % (bname, len(seed_data)))
                 return
             if seed_version == 4:
                 iv = seed_data[:16]
                 encrypted_data = seed_data[16:32]
                 iv = binascii.hexlify(iv).decode("ascii")
-                encrypted_data = binascii.hexlify(encrypted_data).decode("ascii")
-                sys.stdout.write("%s:$electrum$1*%s*%s\n" % (bname, iv, encrypted_data))
+                encrypted_data = binascii.hexlify(
+                    encrypted_data).decode("ascii")
+                sys.stdout.write("%s:$electrum$1*%s*%s\n" %
+                                 (bname, iv, encrypted_data))
                 return
             else:
-                sys.stderr.write("%s: Unknown seed_version value '%d' found!\n" % (bname, seed_version))
+                sys.stderr.write(
+                    "%s: Unknown seed_version value '%d' found!\n" % (bname, seed_version))
                 return
         except:
-            sys.stderr.write("%s: Problem in parsing seed value!\n" % (bname, seed_version))
+            sys.stderr.write("%s: Problem in parsing seed value!\n" %
+                             (bname, seed_version))
             return
 
     # not version 1 wallet
@@ -130,8 +140,10 @@ def process_file(filename, options):
     if not wallet_type:
         sys.stderr.write("%s: Unrecognized wallet format!\n" % (bname))
         return
-    if wallet.get("seed_version") not in (11, 12, 13) and wallet_type != "imported":  # all 2.x versions as of Oct 2016
-        sys.stderr.write("%s: Unsupported Electrum2 seed version '%d' found!\n" % (bname, seed_version))
+    # all 2.x versions as of Oct 2016
+    if wallet.get("seed_version") not in (11, 12, 13) and wallet_type != "imported":
+        sys.stderr.write(
+            "%s: Unsupported Electrum2 seed version '%d' found!\n" % (bname, seed_version))
         return
     xprv = None
     version = 2  # hack
@@ -154,9 +166,11 @@ def process_file(filename, options):
                     # Construct and return a WalletElectrum1 object
                     seed_data = base64.b64decode(seed_data)
                     if len(seed_data) != 64:
-                        raise RuntimeError("Electrum1 encrypted seed plus iv is not 64 bytes long")
+                        raise RuntimeError(
+                            "Electrum1 encrypted seed plus iv is not 64 bytes long")
                     iv = seed_data[:16]  # only need the 16-byte IV plus
-                    encrypted_data = seed_data[16:32]  # the first 16-byte encrypted block of the seed
+                    # the first 16-byte encrypted block of the seed
+                    encrypted_data = seed_data[16:32]
                     version = 1  # hack
                     break
 
@@ -166,15 +180,18 @@ def process_file(filename, options):
                     if privkey:
                         privkey = base64.b64decode(privkey)
                         if len(privkey) != 80:
-                            raise RuntimeError("Electrum2 private key plus iv is not 80 bytes long")
+                            raise RuntimeError(
+                                "Electrum2 private key plus iv is not 80 bytes long")
                         iv = privkey[-32:-16]  # only need the 16-byte IV plus
-                        encrypted_data = privkey[-16:]  # the last 16-byte encrypted block of the key
+                        # the last 16-byte encrypted block of the key
+                        encrypted_data = privkey[-16:]
                         version = 3  # dirty hack!
                         break
                 if version == 3:  # another dirty hack, break out of outer loop
                     break
             else:
-                sys.stderr.write("%s: found unsupported keystore type!\n" % (bname))
+                sys.stderr.write(
+                    "%s: found unsupported keystore type!\n" % (bname))
 
         # Electrum 2.7+ multisig or 2fa wallet
         for i in itertools.count(1):
@@ -187,7 +204,8 @@ def process_file(filename, options):
                 if xprv:
                     break
             else:
-                sys.stderr.write("%s: found unsupported keystore type!\n" % (bname))
+                sys.stderr.write(
+                    "%s: found unsupported keystore type!\n" % (bname))
         if xprv:
             break
 
@@ -198,9 +216,11 @@ def process_file(filename, options):
                 if privkey:
                     privkey = base64.b64decode(privkey)
                     if len(privkey) != 80:
-                        raise RuntimeError("Electrum2 private key plus iv is not 80 bytes long")
+                        raise RuntimeError(
+                            "Electrum2 private key plus iv is not 80 bytes long")
                     iv = privkey[-32:-16]  # only need the 16-byte IV plus
-                    encrypted_data = privkey[-16:]  # the last 16-byte encrypted block of the key
+                    # the last 16-byte encrypted block of the key
+                    encrypted_data = privkey[-16:]
                     version = 3  # dirty hack
                     break
             if version == 3:  # another dirty hack, break out of outer loop
@@ -213,29 +233,35 @@ def process_file(filename, options):
                 xprv = mpks.values()[0]
                 break
 
-        raise RuntimeError("No master private keys or seeds found in Electrum2 wallet")
+        raise RuntimeError(
+            "No master private keys or seeds found in Electrum2 wallet")
 
     if xprv:
         xprv_data = base64.b64decode(xprv)
         if len(xprv_data) != 128:
-            raise RuntimeError("Unexpected Electrum2 encrypted master private key length")
+            raise RuntimeError(
+                "Unexpected Electrum2 encrypted master private key length")
         iv = xprv_data[:16]  # only need the 16-byte IV plus
-        encrypted_data = xprv_data[16:32]  # the first 16-byte encrypted block of a master privkey
+        # the first 16-byte encrypted block of a master privkey
+        encrypted_data = xprv_data[16:32]
 
     iv = binascii.hexlify(iv).decode("ascii")
     encrypted_data = binascii.hexlify(encrypted_data).decode("ascii")
 
-    sys.stdout.write("%s:$electrum$%d*%s*%s\n" % (bname, version, iv, encrypted_data))
+    sys.stdout.write("%s:$electrum$%d*%s*%s\n" %
+                     (bname, version, iv, encrypted_data))
     f.close()
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.stderr.write("Usage: %s [Ethereum Wallet files (default_wallet)]\n" % sys.argv[0])
+        sys.stderr.write(
+            "Usage: %s [Ethereum Wallet files (default_wallet)]\n" % sys.argv[0])
         sys.exit(-1)
 
     parser = optparse.OptionParser()
-    parser.add_option('-t', action="store_true", dest="truncate", help="force generation of truncated hashes")
+    parser.add_option('-t', action="store_true", dest="truncate",
+                      help="force generation of truncated hashes")
     options, remainder = parser.parse_args()
 
     for j in range(0, len(remainder)):

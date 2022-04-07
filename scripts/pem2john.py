@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # coding: utf-8
 
 # Copyright (C) 2015, Dhiru Kholia <dhiru [at] kth.se>
@@ -12,7 +12,8 @@ try:
     from asn1crypto import pem
     from asn1crypto.keys import EncryptedPrivateKeyInfo
 except ImportError:
-    sys.stderr.write("asn1crypto python package is missing, please install it using 'pip install asn1crypto' command.\n")
+    sys.stderr.write(
+        "asn1crypto python package is missing, please install it using 'pip install asn1crypto' command.\n")
     # traceback.print_exc()
     sys.exit(-1)
 
@@ -79,10 +80,12 @@ def unwrap_pkcs8(blob):
     iv = cipher_params["parameters"]
 
     if cipher != "tripledes_3key":
-        sys.stderr.write("[%s] cipher <%s> is not supported currently!\n" % (sys.argv[0], cipher))
+        sys.stderr.write(
+            "[%s] cipher <%s> is not supported currently!\n" % (sys.argv[0], cipher))
         return
 
-    sys.stdout.write("$PEM$1$1$%s$%s$%s$%d$%s\n" % (salt.encode("hex"), iterations, iv.encode("hex"), len(encrypted_data), encrypted_data.encode("hex")))
+    sys.stdout.write("$PEM$1$1$%s$%s$%s$%d$%s\n" % (salt.encode("hex"), iterations, iv.encode(
+        "hex"), len(encrypted_data), encrypted_data.encode("hex")))
 
 
 if __name__ == "__main__":
@@ -95,9 +98,11 @@ if __name__ == "__main__":
         blob = open(filename, "rb").read()
         if b'-----BEGIN ENCRYPTED PRIVATE KEY-----' not in blob:
             if b'PRIVATE KEY-----' in blob:
-                sys.stderr.write("[%s] try using sshng2john.py on this file instead!\n" % sys.argv[0])
+                sys.stderr.write(
+                    "[%s] try using sshng2john.py on this file instead!\n" % sys.argv[0])
             else:
-                sys.stderr.write("[%s] is this really a private key in PKCS #8 format?\n" % sys.argv[0])
+                sys.stderr.write(
+                    "[%s] is this really a private key in PKCS #8 format?\n" % sys.argv[0])
 
             continue
 

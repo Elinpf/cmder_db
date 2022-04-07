@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 # This software is Copyright (c) 2017, Dhiru Kholia <dhiru.kholia at gmail.com>
 # and it is hereby released to the general public under the following terms:
@@ -27,7 +27,8 @@ except ImportError:
         sys.path.append(".")
         import simplejson as json
     except ImportError:
-        sys.stderr.write("Please install json / simplejson module which is currently not installed.\n")
+        sys.stderr.write(
+            "Please install json / simplejson module which is currently not installed.\n")
         sys.exit(-1)
 
 
@@ -35,14 +36,16 @@ def process_presale_wallet(filename, data):
     try:
         bkp = data["bkp"]
     except KeyError:
-        sys.stdout.write("%s: presale wallet is missing 'bkp' field, this is unsupported!\n" % filename)
+        sys.stdout.write(
+            "%s: presale wallet is missing 'bkp' field, this is unsupported!\n" % filename)
         return
 
     try:
         encseed = data["encseed"]
         ethaddr = data["ethaddr"]
     except KeyError:
-        sys.stdout.write("%s: presale wallet is missing necessary fields!\n" % filename)
+        sys.stdout.write(
+            "%s: presale wallet is missing necessary fields!\n" % filename)
         return
 
     # 16 bytes of bkp should be enough
@@ -71,7 +74,8 @@ def process_file(filename):
                 return
         cipher = crypto["cipher"]
         if cipher != "aes-128-ctr":
-            sys.stdout.write("%s: unexpected cipher '%s' found\n" % (filename, cipher))
+            sys.stdout.write("%s: unexpected cipher '%s' found\n" %
+                             (filename, cipher))
             return -2
         kdf = crypto["kdf"]
         ciphertext = crypto["ciphertext"]
@@ -90,7 +94,8 @@ def process_file(filename):
             n = kdfparams["c"]
             prf = kdfparams["prf"]
             if prf != 'hmac-sha256':
-                sys.stdout.write("%s: unexpected prf '%s' found\n" % (filename, prf))
+                sys.stdout.write(
+                    "%s: unexpected prf '%s' found\n" % (filename, prf))
                 return
             salt = kdfparams["salt"]
             sys.stdout.write("%s:$ethereum$p*%s*%s*%s*%s\n" %
@@ -108,7 +113,8 @@ def process_file(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.stderr.write("Usage: %s [Ethereum Wallet files (Geth/Mist/MyEtherWallet)]\n" % sys.argv[0])
+        sys.stderr.write(
+            "Usage: %s [Ethereum Wallet files (Geth/Mist/MyEtherWallet)]\n" % sys.argv[0])
         sys.exit(-1)
 
     for j in range(1, len(sys.argv)):

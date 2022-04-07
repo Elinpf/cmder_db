@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/python32
 
 # This file was named krbpa2john.py previously.
 #
@@ -29,7 +29,8 @@ import sys
 try:
     from lxml import etree
 except ImportError:
-    sys.stderr.write("This program needs lxml libraries to run. Please install the python-lxml package.\n")
+    sys.stderr.write(
+        "This program needs lxml libraries to run. Please install the python-lxml package.\n")
     sys.exit(1)
 import binascii
 
@@ -38,7 +39,8 @@ def process_file(f):
 
     xmlData = etree.parse(f)
 
-    messages = [e for e in xmlData.xpath('/pdml/packet/proto[@name="kerberos"]')]
+    messages = [e for e in xmlData.xpath(
+        '/pdml/packet/proto[@name="kerberos"]')]
     PA_DATA_ENC_TIMESTAMP = None
     etype = None
     user = ''
@@ -46,7 +48,8 @@ def process_file(f):
     realm = None
 
     for msg in messages:  # msg is of type "proto"
-        r = msg.xpath('.//field[@name="kerberos.msg_type"]') or msg.xpath('.//field[@name="kerberos.msg.type"]')
+        r = msg.xpath(
+            './/field[@name="kerberos.msg_type"]') or msg.xpath('.//field[@name="kerberos.msg.type"]')
         if not r:
             continue
         if isinstance(r, list):
@@ -57,7 +60,8 @@ def process_file(f):
         # from a different packet when etype is 17 or 18!
         # if salt is empty, realm.user is used instead (in krb5pa-sha1_fmt_plug.c)
         if message_type == "30":  # KRB-ERROR
-            r = msg.xpath('.//field[@name="kerberos.etype_info2.salt"]') or msg.xpath('.//field[@name="kerberos.salt"]') or msg.xpath('.//field[@name="kerberos.etype_info.salt"]')
+            r = msg.xpath('.//field[@name="kerberos.etype_info2.salt"]') or msg.xpath(
+                './/field[@name="kerberos.salt"]') or msg.xpath('.//field[@name="kerberos.etype_info.salt"]')
             if r:
                 if isinstance(r, list):
                     # some of the entries might have "value" missing!
@@ -71,7 +75,8 @@ def process_file(f):
 
         if message_type == "10":  # Kerberos AS-REQ
             # locate encrypted timestamp
-            r = msg.xpath('.//field[@name="kerberos.padata"]//field[@name="kerberos.PA_ENC_TIMESTAMP.encrypted"]') or msg.xpath('.//field[@name="kerberos.padata"]//field[@name="kerberos.cipher"]')
+            r = msg.xpath('.//field[@name="kerberos.padata"]//field[@name="kerberos.PA_ENC_TIMESTAMP.encrypted"]') or msg.xpath(
+                './/field[@name="kerberos.padata"]//field[@name="kerberos.cipher"]')
             if not r:
                 continue
             if isinstance(r, list):
@@ -79,7 +84,8 @@ def process_file(f):
             PA_DATA_ENC_TIMESTAMP = r.attrib["value"]
 
             # locate etype
-            r = msg.xpath('.//field[@name="kerberos.padata"]//field[@name="kerberos.etype"]')
+            r = msg.xpath(
+                './/field[@name="kerberos.padata"]//field[@name="kerberos.etype"]')
             if not r:
                 continue
             if isinstance(r, list):
@@ -87,7 +93,8 @@ def process_file(f):
             etype = r.attrib["show"]
 
             # locate realm
-            r = msg.xpath('.//field[@name="kerberos.kdc_req_body"]//field[@name="kerberos.realm"]') or msg.xpath('.//field[@name="kerberos.req_body_element"]//field[@name="kerberos.realm"]')
+            r = msg.xpath('.//field[@name="kerberos.kdc_req_body"]//field[@name="kerberos.realm"]') or msg.xpath(
+                './/field[@name="kerberos.req_body_element"]//field[@name="kerberos.realm"]')
             if not r:
                 continue
             if isinstance(r, list):
@@ -95,7 +102,8 @@ def process_file(f):
             realm = r.attrib["show"]
 
             # locate cname
-            r = msg.xpath('.//field[@name="kerberos.req_body_element"]//field[@name="kerberos.KerberosString"]') or msg.xpath('.//field[@name="kerberos.kdc_req_body"]//field[@name="kerberos.name_string"]') or msg.xpath('.//field[@name="kerberos.req_body_element"]//field[@name="kerberos.CNameString"]')
+            r = msg.xpath('.//field[@name="kerberos.req_body_element"]//field[@name="kerberos.KerberosString"]') or msg.xpath(
+                './/field[@name="kerberos.kdc_req_body"]//field[@name="kerberos.name_string"]') or msg.xpath('.//field[@name="kerberos.req_body_element"]//field[@name="kerberos.CNameString"]')
             if r:
                 if isinstance(r, list):
                     r = r[0]
@@ -109,25 +117,28 @@ def process_file(f):
             enc_timestamp = PA_DATA_ENC_TIMESTAMP[32:]
             if etype == "23":  # user:$krb5pa$etype$user$realm$salt$HexTimestampHexChecksum
                 sys.stdout.write("%s:$krb5pa$%s$%s$%s$%s$%s%s\n" % (user,
-                            etype, user, realm, salt,
-                            enc_timestamp,
-                            checksum))
+                                                                    etype, user, realm, salt,
+                                                                    enc_timestamp,
+                                                                    checksum))
             else:
                 if not salt:
-                    sys.stderr.write("[-] Hash might be broken, etype != 23 and salt not found!\n")
+                    sys.stderr.write(
+                        "[-] Hash might be broken, etype != 23 and salt not found!\n")
                 sys.stdout.write("%s:$krb5pa$%s$%s$%s$%s$%s\n" % (user,
-                            etype, user, realm, salt,
-                            PA_DATA_ENC_TIMESTAMP))
+                                                                  etype, user, realm, salt,
+                                                                  PA_DATA_ENC_TIMESTAMP))
 
     for msg in messages:  # extract hashes from TGS-REP messages
-        r = msg.xpath('.//field[@name="kerberos.msg_type"]') or msg.xpath('.//field[@name="kerberos.msg.type"]')
+        r = msg.xpath(
+            './/field[@name="kerberos.msg_type"]') or msg.xpath('.//field[@name="kerberos.msg.type"]')
         if not r:
             continue
         if isinstance(r, list):
             r = r[0]
         message_type = r.attrib["show"]
         if message_type == "13":  # Kerberos TGS_REP
-            spnps = msg.xpath('.//field[@name="kerberos.SNameString"]')  # is this robust enough?
+            # is this robust enough?
+            spnps = msg.xpath('.//field[@name="kerberos.SNameString"]')
             spn = "Unknown"
             if isinstance(spnps, list):
                 out = []
@@ -157,12 +168,15 @@ def process_file(f):
                         v = v[0]
                     data = v.attrib["value"]
                     if etype != "23":
-                        sys.stderr.write("Currently unsupported etype %s found!\n" % etype)
+                        sys.stderr.write(
+                            "Currently unsupported etype %s found!\n" % etype)
                     else:
-                        sys.stdout.write("%s:$krb5tgs$%s$%s$%s\n" % (spn, etype, data[:32], data[32:]))
+                        sys.stdout.write("%s:$krb5tgs$%s$%s$%s\n" % (
+                            spn, etype, data[:32], data[32:]))
 
     for msg in messages:  # extract hashes from AS-REP messages
-        r = msg.xpath('.//field[@name="kerberos.msg_type"]') or msg.xpath('.//field[@name="kerberos.msg.type"]')
+        r = msg.xpath(
+            './/field[@name="kerberos.msg_type"]') or msg.xpath('.//field[@name="kerberos.msg.type"]')
         if not r:
             continue
         if isinstance(r, list):
@@ -170,7 +184,8 @@ def process_file(f):
         message_type = r.attrib["show"]
 
         if message_type == "11":  # Kerberos AS-REP
-            s = msg.xpath('.//field[@name="kerberos.salt"]')  # is this valid for M$ AD too?
+            # is this valid for M$ AD too?
+            s = msg.xpath('.//field[@name="kerberos.salt"]')
             # locate the hash
             rs = msg.xpath('.//field[@name="kerberos.enc_part_element"]')
             if not rs:
@@ -191,11 +206,13 @@ def process_file(f):
                     etype = v.attrib["show"]
                     if etype != "23":
                         if s is None:
-                            sys.stderr.write("Unable to find kerberos.salt value. Please report this bug to us!\n")
+                            sys.stderr.write(
+                                "Unable to find kerberos.salt value. Please report this bug to us!\n")
                             continue
                         if isinstance(s, list):
                             if len(s) == 0:
-                                sys.stderr.write("Unable to find kerberos.salt value. Please report this bug to us!\n")
+                                sys.stderr.write(
+                                    "Unable to find kerberos.salt value. Please report this bug to us!\n")
                                 continue
                             s = s[0]
                             salt = s.attrib["show"]
@@ -204,14 +221,18 @@ def process_file(f):
                         v = v[0]
                     data = v.attrib["value"]
                     if etype != "23":
-                        sys.stdout.write("$krb5asrep$%s$%s$%s$%s\n" % (etype, salt, data[0:-24], data[-24:]))
+                        sys.stdout.write("$krb5asrep$%s$%s$%s$%s\n" % (
+                            etype, salt, data[0:-24], data[-24:]))
                     else:
-                        sys.stdout.write("$krb5asrep$%s$%s$%s\n" % (etype, data[0:32], data[32:]))
+                        sys.stdout.write("$krb5asrep$%s$%s$%s\n" %
+                                         (etype, data[0:32], data[32:]))
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.stdout.write("Usage: %s <.pdml files>\n" % sys.argv[0])
-        sys.stdout.write("\ntshark -r sample.pcap -T pdml > sample.pdml; %s sample.pdml\n" % sys.argv[0])
+        sys.stdout.write(
+            "\ntshark -r sample.pcap -T pdml > sample.pdml; %s sample.pdml\n" % sys.argv[0])
         sys.exit(1)
 
     for i in range(1, len(sys.argv)):

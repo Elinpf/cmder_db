@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import sys
 import base64
@@ -29,10 +29,12 @@ if __name__ == '__main__':
             data = f.read()
             # try to detect the wallet format version, https://blockchain.info/wallet/wallet-format
             if b"guid" in data and args.json:  # v1
-                sys.stderr.write("My Wallet Version 1 seems to be used, remove --json option!\n")
+                sys.stderr.write(
+                    "My Wallet Version 1 seems to be used, remove --json option!\n")
                 continue
             if b"pbkdf2_iterations" in data and not args.json:  # v2/v3
-                sys.stderr.write("My Wallet Version 2 or 3 seems to be used, adding --json option is required!\n")
+                sys.stderr.write(
+                    "My Wallet Version 2 or 3 seems to be used, adding --json option is required!\n")
                 continue
 
             if args.json:

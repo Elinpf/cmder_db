@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 # This software is Copyright (c) 2014, Sanju Kholia <sanju.kholia at gmail.com>
 # and it is hereby released to the general public under the following terms:
@@ -25,7 +25,8 @@ KWALLET_CIPHER_GPG = 2
 KWALLET_CIPHER_BLOWFISH_CBC = 3
 KWALLET_HASH_SHA1 = 0
 KWALLET_HASH_MD5 = 1  # unsupported (even upstream)
-KWALLET_HASH_PBKDF2_SHA512 = 2  # used when using kwallet with pam or since 4.13 version
+# used when using kwallet with pam or since 4.13 version
+KWALLET_HASH_PBKDF2_SHA512 = 2
 N = 128
 
 PBKDF2_SHA512_KEYSIZE = 56
@@ -109,7 +110,8 @@ def process_file(filename):
         try:
             salt = open(salt_filename).read()
         except:
-            sys.stderr.write("%s : unable to read salt from %s\n" % (filename, salt_filename))
+            sys.stderr.write("%s : unable to read salt from %s\n" %
+                             (filename, salt_filename))
             sys.exit(8)
         salt_len = len(salt)
         iterations = PBKDF2_SHA512_ITERATIONS  # is this fixed?
@@ -119,10 +121,12 @@ def process_file(filename):
                           salt.encode("hex"), iterations))
         sys.stdout.write(":::::%s\n" % filename)
     else:
-        sys.stdout.write("%s:$kwallet$%ld$%s" % (os.path.basename(filename), encrypted_size, hexlify(encrypted)))
+        sys.stdout.write("%s:$kwallet$%ld$%s" % (
+            os.path.basename(filename), encrypted_size, hexlify(encrypted)))
         sys.stdout.write(":::::%s\n" % filename)
 
     fd.close()
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 """odf2john.py processes ODF files into a format suitable
 for use with JtR.
@@ -45,31 +45,39 @@ def process_file(filename):
             for j in range(i + 1, i + 1 + 3):
                 element = elements[j]
                 # print element.items()
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}checksum")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}checksum")
                 if data:
                     is_encrypted = True
                     checksum = data
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}checksum-type")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}checksum-type")
                 if data:
                     checksum_type = data
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}initialisation-vector")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}initialisation-vector")
                 if data:
                     iv = data
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}salt")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}salt")
                 if data:
                     salt = data
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}algorithm-name")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}algorithm-name")
                 if data:
                     algorithm_name = data
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}iteration-count")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}iteration-count")
                 if data:
                     iteration_count = data
-                data = element.get("{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}key-size")
+                data = element.get(
+                    "{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}key-size")
                 if data:
                     key_size = data
 
     if not is_encrypted:
-        sys.stderr.write("%s is not an encrypted OpenOffice file!\n" % filename)
+        sys.stderr.write(
+            "%s is not an encrypted OpenOffice file!\n" % filename)
         return 4
 
     checksum = base64.decodestring(checksum.encode())
@@ -80,8 +88,8 @@ def process_file(filename):
     try:
         content = zf.open("content.xml").read(1024)
     except KeyError:
-        sys.stderr.write("%s is not an encrypted OpenOffice file, " \
-                "content.xml missing!\n" % filename)
+        sys.stderr.write("%s is not an encrypted OpenOffice file, "
+                         "content.xml missing!\n" % filename)
         return 5
 
     if algorithm_name.find("Blowfish CFB") > -1:
@@ -97,8 +105,8 @@ def process_file(filename):
     elif checksum_type.upper().find("SHA256") > -1:
         checksum_type = 1
     else:
-        sys.stderr.write("%s uses un-supported checksum algorithm!\n" % \
-                filename)
+        sys.stderr.write("%s uses un-supported checksum algorithm!\n" %
+                         filename)
         return 7
 
     meta_data_available = True
@@ -118,22 +126,27 @@ def process_file(filename):
                     gecos += child.text
                 elif "description" in child.tag:
                     gecos += child.text
-        gecos = gecos.replace("\n","").replace("\r","").replace(":","")
+        gecos = gecos.replace("\n", "").replace("\r", "").replace(":", "")
     except:
         meta_data_available = False
 
     if meta_data_available:
-        sys.stdout.write("%s:$odf$*%s*%s*%s*%s*%s*%d*%s*%d*%s*%d*%s:::%s::%s\n" % \
-                (os.path.basename(filename), algorithm_type, checksum_type,
-                iteration_count, key_size, checksum, len(iv) / 2, iv,
-                len(salt) / 2, salt, 0, binascii.hexlify(content).decode("ascii"),
-                gecos, filename))
+        sys.stdout.write("%s:$odf$*%s*%s*%s*%s*%s*%d*%s*%d*%s*%d*%s:::%s::%s\n" %
+                         (os.path.basename(filename), algorithm_type, checksum_type,
+                          iteration_count, key_size, checksum, len(iv) / 2, iv,
+                          len(salt) /
+                          2, salt, 0, binascii.hexlify(
+                              content).decode("ascii"),
+                             gecos, filename))
     else:
-        sys.stdout.write("%s:$odf$*%s*%s*%s*%s*%s*%d*%s*%d*%s*%d*%s:::::%s\n" % \
-                (os.path.basename(filename), algorithm_type, checksum_type,
-                iteration_count, key_size, checksum, len(iv) / 2, iv,
-                len(salt) / 2, salt, 0, binascii.hexlify(content).decode("ascii"),
-                filename))
+        sys.stdout.write("%s:$odf$*%s*%s*%s*%s*%s*%d*%s*%d*%s*%d*%s:::::%s\n" %
+                         (os.path.basename(filename), algorithm_type, checksum_type,
+                          iteration_count, key_size, checksum, len(iv) / 2, iv,
+                          len(salt) /
+                          2, salt, 0, binascii.hexlify(
+                              content).decode("ascii"),
+                             filename))
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
