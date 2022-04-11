@@ -80,3 +80,6 @@ sudo -l
 
 # desc: Load a new shell
 /bin/bash -p
+
+# desc: 修改hosts文件
+vim /etc/hosts
