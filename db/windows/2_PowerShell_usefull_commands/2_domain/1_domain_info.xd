@@ -23,10 +23,6 @@ Get-DomainPolicy
 # desc: Check your privileges
 (Get-DomainPolicy).PrivilegeRights 
 
-# desc: 判断是否安装LAPS密码解决方案
-# 发现后可以尝试使用 laps.py 脚本进行密码导出
-Get-ChildItem 'c:\program files\LAPS\CSE\Admpwd.dll'
-
 --- Domain Controller
 
 # desc: Get Domain Controller
