@@ -1,13 +1,17 @@
 --- Domain info
 
-# desc: Get domain name
-echo %USERDOMAIN% 
+# desc: 获取域控IP
+# 得到CN后Ping一下就可以得到IP了
+dsquery server
 
 # desc: Get domain name
-echo %USERDNSDOMAIN% 
+$env:USERDOMAIN
+
+# desc: Get domain name
+$env:USERDNSDOMAIN
 
 # desc: Get name of the domain controller
-echo %logonserver% 
+$env:logonserver
 
 # desc: Get name of the domain controller
 set logonserver 

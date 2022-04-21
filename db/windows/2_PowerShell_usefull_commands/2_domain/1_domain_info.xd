@@ -7,6 +7,9 @@ Get-NetDomain -Domain #{DOMAIN}
 # desc: Get domain SID
 Get-DomainSID 
 
+# desc: Get Forest info
+Get-ADForest
+
 --- Policy
 # desc: Get info about the policy
 Get-DomainPolicy 
@@ -19,6 +22,10 @@ Get-DomainPolicy
 
 # desc: Check your privileges
 (Get-DomainPolicy).PrivilegeRights 
+
+# desc: 判断是否安装LAPS密码解决方案
+# 发现后可以尝试使用 laps.py 脚本进行密码导出
+Get-ChildItem 'c:\program files\LAPS\CSE\Admpwd.dll'
 
 --- Domain Controller
 
