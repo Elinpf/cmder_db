@@ -15,4 +15,4 @@ Get-ChildItem 'c:\program files\LAPS\CSE\Admpwd.dll'
 reg query "HKLM\Software\Policies\Microsoft Services\AdmPwd" /v AdmPwdEnabled
 
 # desc: Dump密码
-laps.py
+laps.py -u #{USER} -p '#{PWD}' -d #{DOMAIN}
