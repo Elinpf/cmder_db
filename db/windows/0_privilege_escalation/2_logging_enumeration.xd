@@ -3,9 +3,13 @@
 
 # desc: [INFO]
 Notes
-# """LAPS（Local Administrator Password Solution，本地管理员密码解决方案）是用来管理域内主机本地管理员密码的一款工具。LAPS会将密码/凭据存放在活动目录中与计算机对应的对象的一个机密属性（confidential attribute）中。通过随机生成本地管理员的密码，LAPS可以有效消除横向渗透所带来的安全风险。LAPS是一种组策略客户端扩展（Group Policy Client Side Extension ，CSE），安装在所有受管主机上，可以执行所有管理任务。
+# """LAPS（Local Administrator Password Solution，本地管理员密码解决方案）是用来管理域内主机本地管理员密码的一款工具。
+LAPS会将密码/凭据存放在活动目录中与计算机对应的对象的一个机密属性（confidential attribute）中。
+通过随机生成本地管理员的密码，LAPS可以有效消除横向渗透所带来的安全风险。
+LAPS是一种组策略客户端扩展（Group Policy Client Side Extension ，CSE），安装在所有受管主机上，可以执行所有管理任务。
 
-如果目标账户具备AD中计算机对象的完全控制权限（如域管理员），就可以读取及写入相关信息（比如密码及过期时间戳）。存放在AD中的密码受ACL保护，系统管理员负责定义可以（以及无法）读取这些属性的账户。当密码及时间戳在网络中传输时，会使用kerberos进行加密，当存放在AD中时，密码和时间戳都以明文形式存储。
+如果目标账户具备AD中计算机对象的完全控制权限（如域管理员），就可以读取及写入相关信息（比如密码及过期时间戳）。
+存放在AD中的密码受ACL保护，系统管理员负责定义可以（以及无法）读取这些属性的账户。当密码及时间戳在网络中传输时，会使用kerberos进行加密，当存放在AD中时，密码和时间戳都以明文形式存储。
 """
 
 # desc: 判断是否安装LAPS密码解决方案

